@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: booktracker
+  datasource:
+    url: jdbc:postgresql://localhost:5432/booktracker
+    username: booktracker
+    password: booktracker_dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

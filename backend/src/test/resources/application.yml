@@ -3,3 +3,9 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: create-drop
+
+app:
+  jwt:
+    secret: test-secret-key-for-testing-only-minimum-256-bits-long
+    access-token-expiration: 900000
+    refresh-token-expiration: 604800000

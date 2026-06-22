@@ -1,14 +1,16 @@
 package com.maesejoe.booktracker.book;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.maesejoe.booktracker.auth.config.SecurityConfig;
 import com.maesejoe.booktracker.auth.filter.JwtAuthenticationFilter;
 import com.maesejoe.booktracker.book.dto.BookRequest;
 import com.maesejoe.booktracker.book.dto.BookResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,8 +22,19 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(BookController.class)
-@WithMockUser
+@WebMvcTest(
+        controllers = BookController.class,
+        excludeFilters = {
+                @ComponentScan.Filter(
+                        type = FilterType.ASSIGNABLE_TYPE,
+                        classes = SecurityConfig.class
+                ),
+                @ComponentScan.Filter(
+                        type = FilterType.ASSIGNABLE_TYPE,
+                        classes = JwtAuthenticationFilter.class
+                )
+        }
+)
 public class BookControllerTest {
 
     @Autowired
@@ -31,9 +44,6 @@ public class BookControllerTest {
 
     @MockitoBean
     private BookService bookService;
-
-    @MockitoBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Test
     void shouldReturnAllBooks() throws Exception {

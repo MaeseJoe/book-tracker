@@ -52,8 +52,8 @@ export function BooksPage() {
                                 key={s ?? 'all'}
                                 onClick={() => setStatusFilter(s)}
                                 className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${statusFilter === s
-                                        ? 'bg-indigo-600 text-white'
-                                        : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                                     }`}
                             >
                                 {s ? STATUS_LABELS[s] : 'All'}
@@ -149,6 +149,7 @@ export function BooksPage() {
             />
 
             <BookModal
+                key={editingBook?.id ?? 'edit'}
                 isOpen={!!editingBook}
                 onClose={() => setEditingBook(null)}
                 book={editingBook ?? undefined}

@@ -10,56 +10,64 @@ permissions:
     contents: read
 
 jobs:
+    changes:
+        name: Detect changes
+        runs-on: ubuntu-latest
+        outputs:
+            backend: ${{ steps.filter.outputs.backend }}
+            frontend: ${{ steps.filter.outputs.frontend }}
+        steps:
+            - uses: actions/checkout@v7
+            - uses: dorny/paths-filter@v3
+              id: filter
+              with:
+                  filters: |
+                      backend:
+                        - 'backend/**'
+                        - '.github/workflows/ci.yml'
+                      frontend:
+                        - 'frontend/**'
+                        - '.github/workflows/ci.yml'
+
     backend:
         name: Backend · Build & Test
+        needs: changes
+        if: needs.changes.outputs.backend == 'true'
         runs-on: ubuntu-latest
         defaults:
             run:
                 working-directory: backend
         steps:
-            - name: Checkout
-              uses: actions/checkout@v7
-
-            - name: Set up JDK 21
-              uses: actions/setup-java@v5
+            - uses: actions/checkout@v7
+            - uses: actions/setup-java@v5
               with:
                   java-version: '21'
                   distribution: 'temurin'
                   cache: maven
-
             - name: Build and test
               run: ./mvnw --batch-mode verify
 
     frontend:
         name: Frontend · Lint & Build
+        needs: changes
+        if: needs.changes.outputs.frontend == 'true'
         runs-on: ubuntu-latest
         defaults:
             run:
                 working-directory: frontend
         steps:
-            - name: Checkout
-              uses: actions/checkout@v7
-
-            - name: Set up pnpm
-              uses: pnpm/action-setup@v6
+            - uses: actions/checkout@v7
+            - uses: pnpm/action-setup@v6
               with:
                   version: 11
-
-            - name: Set up Node.js
-              uses: actions/setup-node@v6
+            - uses: actions/setup-node@v6
               with:
                   node-version: '24'
                   cache: 'pnpm'
                   cache-dependency-path: frontend/pnpm-lock.yaml
-
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-
-            - name: Lint
-              run: pnpm run lint
-
-            - name: Build
-              run: pnpm run build
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm run lint
+            - run: pnpm run build
 
     ci-success:
         name: CI · All checks passed
@@ -72,4 +80,4 @@ jobs:
                   if [[ "${{ needs.backend.result }}" == "failure" || "${{ needs.frontend.result }}" == "failure" ]]; then
                     exit 1
                   fi
-                  echo "All required checks passed"
+                  echo "All required checks passed (skipped jobs are OK)"

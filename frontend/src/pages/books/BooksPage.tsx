@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import type { Book, ReadingStatus } from '../../types';
-import { useAuth } from '../../hooks/useAuth';
 import { booksApi } from '../../api/books';
+import { useAuth } from '../../hooks/useAuth';
+import { AddBookModal } from '../../components/AddBookModal';
+import type { ReadingStatus } from '../../types';
 
 const STATUS_LABELS: Record<ReadingStatus, string> = {
     WANT_TO_READ: 'Want to read',
@@ -19,6 +20,7 @@ const STATUS_COLORS: Record<ReadingStatus, string> = {
 export function BooksPage() {
     const { logout } = useAuth();
     const [statusFilter, setStatusFilter] = useState<ReadingStatus | undefined>();
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const { data: books, isLoading, error } = useQuery({
         queryKey: ['books', statusFilter],
@@ -42,21 +44,24 @@ export function BooksPage() {
             <main className="mx-auto max-w-4xl px-4 py-8">
                 <div className="mb-6 flex items-center justify-between">
                     <div className="flex gap-2">
-                        {([undefined, 'WANT_TO_READ', 'READING', 'FINISHED'] as const).map((status) => (
+                        {([undefined, 'WANT_TO_READ', 'READING', 'FINISHED'] as const).map((s) => (
                             <button
-                                key={status ?? 'all'}
-                                onClick={() => setStatusFilter(status)}
-                                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${statusFilter === status
+                                key={s ?? 'all'}
+                                onClick={() => setStatusFilter(s)}
+                                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${statusFilter === s
                                     ? 'bg-indigo-600 text-white'
                                     : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                                     }`}
                             >
-                                {status ? STATUS_LABELS[status] : 'All'}
+                                {s ? STATUS_LABELS[s] : 'All'}
                             </button>
                         ))}
                     </div>
 
-                    <button className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white font-medium hover:bg-indigo-700 transition-colors">
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white font-medium hover:bg-indigo-700 transition-colors"
+                    >
                         + Add book
                     </button>
                 </div>
@@ -79,14 +84,14 @@ export function BooksPage() {
 
                 {books && books.length > 0 && (
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {books.map((book: Book) => (
+                        {books.map((book) => (
                             <div
                                 key={book.id}
                                 className="rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
                             >
                                 <div className="flex items-start justify-between gap-2">
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-gray-900 truncate">{book.title}</h3>
+                                        <h3 className="font-semibold text-gray-900 line-clamp-2">{book.title}</h3>
                                         <p className="text-sm text-gray-500 mt-0.5">{book.author}</p>
                                         {book.publishedYear && (
                                             <p className="text-xs text-gray-400 mt-0.5">{book.publishedYear}</p>
@@ -101,6 +106,11 @@ export function BooksPage() {
                     </div>
                 )}
             </main>
+
+            <AddBookModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 }

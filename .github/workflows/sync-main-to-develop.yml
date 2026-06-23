@@ -1,0 +1,30 @@
+name: Sync main to develop
+
+on:
+    push:
+        branches: [main]
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    sync:
+        name: Create PR to sync main → develop
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  fetch-depth: 0
+
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v7
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  base: develop
+                  branch: chore/sync-main-to-develop
+                  title: 'chore: sync main back to develop'
+                  body: |
+                      Automated PR to sync `main` back to `develop` after a release merge.
+                  commit-message: 'chore: sync main back to develop'
+                  labels: chore

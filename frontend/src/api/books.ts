@@ -1,7 +1,7 @@
 import type { Book, BookRequest, ReadingStatus } from '../types';
 import { apiClient } from './client';
 
-export const bookApi = {
+export const booksApi = {
 	findAll: async (status?: ReadingStatus): Promise<Book[]> => {
 		const params = status ? { status } : {};
 		const response = await apiClient.get<Book[]>('/api/books', { params });

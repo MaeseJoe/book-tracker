@@ -89,17 +89,33 @@ export function BooksPage() {
                                 key={book.id}
                                 className="rounded-xl bg-white p-5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
                             >
-                                <div className="flex items-start justify-between gap-2">
+                                <div className="flex items-start gap-3">
+                                    {book.coverUrl ? (
+                                        <img
+                                            src={book.coverUrl}
+                                            alt={book.title}
+                                            className="h-20 w-14 shrink-0 rounded object-cover shadow-sm"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).style.display = 'none';
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="h-20 w-14 shrink-0 rounded bg-gray-100 flex items-center justify-center text-2xl">
+                                            📚
+                                        </div>
+                                    )}
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-semibold text-gray-900 line-clamp-2">{book.title}</h3>
+                                        <div className="flex items-start justify-between gap-2">
+                                            <h3 className="font-semibold text-gray-900 line-clamp-2">{book.title}</h3>
+                                            <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[book.status]}`}>
+                                                {STATUS_LABELS[book.status]}
+                                            </span>
+                                        </div>
                                         <p className="text-sm text-gray-500 mt-0.5">{book.author}</p>
                                         {book.publishedYear && (
                                             <p className="text-xs text-gray-400 mt-0.5">{book.publishedYear}</p>
                                         )}
                                     </div>
-                                    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[book.status]}`}>
-                                        {STATUS_LABELS[book.status]}
-                                    </span>
                                 </div>
                             </div>
                         ))}

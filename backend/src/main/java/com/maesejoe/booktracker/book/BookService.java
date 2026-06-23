@@ -65,6 +65,7 @@ public class BookService {
         return BookResponse.from(bookRepository.save(book));
     }
 
+    @Transactional
     public void delete(Long id) {
         if(!bookRepository.existsById(id)) {
             throw new BookNotFoundException(id);

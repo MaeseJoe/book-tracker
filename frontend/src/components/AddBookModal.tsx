@@ -3,11 +3,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { booksApi } from '../api/books';
 import { getCoverUrl } from '../api/openLibrary';
 import { BookSearch } from './BookSearch';
-import type { BookRequest, ReadingStatus, OpenLibraryBook } from '../types';
+import type { Book, BookRequest, ReadingStatus, OpenLibraryBook } from '../types';
 
-interface AddBookModalProps {
+interface BookModalProps {
     isOpen: boolean;
     onClose: () => void;
+    book?: Book;
 }
 
 const STATUS_OPTIONS: { value: ReadingStatus; label: string }[] = [
@@ -16,28 +17,20 @@ const STATUS_OPTIONS: { value: ReadingStatus; label: string }[] = [
     { value: 'FINISHED', label: 'Finished' },
 ];
 
-export function AddBookModal({ isOpen, onClose }: AddBookModalProps) {
+export function BookModal({ isOpen, onClose, book }: BookModalProps) {
     const queryClient = useQueryClient();
-    const [title, setTitle] = useState('');
-    const [author, setAuthor] = useState('');
-    const [status, setStatus] = useState<ReadingStatus>('WANT_TO_READ');
-    const [publishedYear, setPublishedYear] = useState('');
-    const [isbn, setIsbn] = useState('');
-    const [coverUrl, setCoverUrl] = useState('');
+    const isEditing = !!book;
+
+    const [title, setTitle] = useState(() => book?.title ?? '');
+    const [author, setAuthor] = useState(() => book?.author ?? '');
+    const [status, setStatus] = useState<ReadingStatus>(() => book?.status ?? 'WANT_TO_READ');
+    const [publishedYear, setPublishedYear] = useState(() => book?.publishedYear?.toString() ?? '');
+    const [isbn, setIsbn] = useState(() => book?.isbn ?? '');
+    const [coverUrl, setCoverUrl] = useState(() => book?.coverUrl ?? '');
     const [error, setError] = useState('');
 
-    const mutation = useMutation({
-        mutationFn: (data: BookRequest) => booksApi.create(data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['books'] });
-            handleClose();
-        },
-        onError: () => {
-            setError('Failed to add book. Please try again.');
-        },
-    });
 
-    const handleClose = () => {
+    const resetForm = () => {
         setTitle('');
         setAuthor('');
         setStatus('WANT_TO_READ');
@@ -45,15 +38,39 @@ export function AddBookModal({ isOpen, onClose }: AddBookModalProps) {
         setIsbn('');
         setCoverUrl('');
         setError('');
+    };
+
+    const handleClose = () => {
+        resetForm();
         onClose();
     };
 
-    const handleOpenLibrarySelect = (book: OpenLibraryBook) => {
-        setTitle(book.title);
-        setAuthor(book.author_name?.[0] ?? '');
-        setPublishedYear(book.first_publish_year?.toString() ?? '');
-        setIsbn(book.isbn?.[0] ?? '');
-        const cover = getCoverUrl(book.cover_i, book.isbn);
+    const createMutation = useMutation({
+        mutationFn: (data: BookRequest) => booksApi.create(data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['books'] });
+            handleClose();
+        },
+        onError: () => setError('Failed to add book. Please try again.'),
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: (data: BookRequest) => booksApi.update(book!.id, data),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['books'] });
+            handleClose();
+        },
+        onError: () => setError('Failed to update book. Please try again.'),
+    });
+
+    const isPending = createMutation.isPending || updateMutation.isPending;
+
+    const handleOpenLibrarySelect = (selected: OpenLibraryBook) => {
+        setTitle(selected.title);
+        setAuthor(selected.author_name?.[0] ?? '');
+        setPublishedYear(selected.first_publish_year?.toString() ?? '');
+        setIsbn(selected.isbn?.[0] ?? '');
+        const cover = getCoverUrl(selected.cover_i, selected.isbn);
         setCoverUrl(cover ?? '');
     };
 
@@ -61,14 +78,20 @@ export function AddBookModal({ isOpen, onClose }: AddBookModalProps) {
         e.preventDefault();
         setError('');
 
-        mutation.mutate({
+        const data: BookRequest = {
             title: title.trim(),
             author: author.trim(),
             status,
             publishedYear: publishedYear ? parseInt(publishedYear) : null,
             isbn: isbn.trim() || null,
             coverUrl: coverUrl.trim() || null,
-        });
+        };
+
+        if (isEditing) {
+            updateMutation.mutate(data);
+        } else {
+            createMutation.mutate(data);
+        }
     };
 
     if (!isOpen) return null;
@@ -78,7 +101,9 @@ export function AddBookModal({ isOpen, onClose }: AddBookModalProps) {
             <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
             <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
                 <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-900">Add book</h2>
+                    <h2 className="text-xl font-semibold text-gray-900">
+                        {isEditing ? 'Edit book' : 'Add book'}
+                    </h2>
                     <button
                         onClick={handleClose}
                         className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -122,7 +147,7 @@ export function AddBookModal({ isOpen, onClose }: AddBookModalProps) {
 
                     <div className="border-t border-gray-100 pt-4">
                         <p className="mb-3 text-xs text-gray-400">
-                            Or fill in the details manually
+                            {isEditing ? 'Update the details below' : 'Or fill in the details manually'}
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -216,10 +241,13 @@ export function AddBookModal({ isOpen, onClose }: AddBookModalProps) {
                                 </button>
                                 <button
                                     type="submit"
-                                    disabled={mutation.isPending}
+                                    disabled={isPending}
                                     className="flex-1 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
-                                    {mutation.isPending ? 'Adding...' : 'Add book'}
+                                    {isPending
+                                        ? (isEditing ? 'Saving...' : 'Adding...')
+                                        : (isEditing ? 'Save changes' : 'Add book')
+                                    }
                                 </button>
                             </div>
                         </form>

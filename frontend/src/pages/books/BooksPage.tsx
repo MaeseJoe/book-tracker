@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { booksApi } from '../../api/books';
 import { useAuth } from '../../hooks/useAuth';
-import { AddBookModal } from '../../components/AddBookModal';
-import type { ReadingStatus } from '../../types';
+import { BookModal } from '../../components/AddBookModal';
+import { DeleteBookModal } from '../../components/DeleteBookModal';
+import type { Book, ReadingStatus } from '../../types';
 
 const STATUS_LABELS: Record<ReadingStatus, string> = {
     WANT_TO_READ: 'Want to read',
@@ -20,7 +21,9 @@ const STATUS_COLORS: Record<ReadingStatus, string> = {
 export function BooksPage() {
     const { logout } = useAuth();
     const [statusFilter, setStatusFilter] = useState<ReadingStatus | undefined>();
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [editingBook, setEditingBook] = useState<Book | null>(null);
+    const [deletingBook, setDeletingBook] = useState<Book | null>(null);
 
     const { data: books, isLoading, error } = useQuery({
         queryKey: ['books', statusFilter],
@@ -59,7 +62,7 @@ export function BooksPage() {
                     </div>
 
                     <button
-                        onClick={() => setIsModalOpen(true)}
+                        onClick={() => setIsAddModalOpen(true)}
                         className="rounded-md bg-indigo-600 px-4 py-2 text-sm text-white font-medium hover:bg-indigo-700 transition-colors"
                     >
                         + Add book
@@ -106,7 +109,9 @@ export function BooksPage() {
                                     )}
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-2">
-                                            <h3 className="font-semibold text-gray-900 line-clamp-2">{book.title}</h3>
+                                            <h3 className="font-semibold text-gray-900 line-clamp-2">
+                                                {book.title}
+                                            </h3>
                                             <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLORS[book.status]}`}>
                                                 {STATUS_LABELS[book.status]}
                                             </span>
@@ -115,6 +120,21 @@ export function BooksPage() {
                                         {book.publishedYear && (
                                             <p className="text-xs text-gray-400 mt-0.5">{book.publishedYear}</p>
                                         )}
+                                        <div className="mt-3 flex gap-2">
+                                            <button
+                                                onClick={() => setEditingBook(book)}
+                                                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
+                                            >
+                                                Edit
+                                            </button>
+                                            <span className="text-xs text-gray-300">·</span>
+                                            <button
+                                                onClick={() => setDeletingBook(book)}
+                                                className="text-xs text-red-500 hover:text-red-700 font-medium transition-colors"
+                                            >
+                                                Delete
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -123,9 +143,22 @@ export function BooksPage() {
                 )}
             </main>
 
-            <AddBookModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+            <BookModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+            />
+
+            <BookModal
+                key={editingBook?.id ?? 'edit'}
+                isOpen={!!editingBook}
+                onClose={() => setEditingBook(null)}
+                book={editingBook ?? undefined}
+            />
+
+            <DeleteBookModal
+                isOpen={!!deletingBook}
+                onClose={() => setDeletingBook(null)}
+                book={deletingBook}
             />
         </div>
     );

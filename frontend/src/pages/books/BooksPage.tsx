@@ -120,6 +120,22 @@ export function BooksPage() {
                                         {book.publishedYear && (
                                             <p className="text-xs text-gray-400 mt-0.5">{book.publishedYear}</p>
                                         )}
+                                        {book.rating && (
+                                            <div className="mt-1 flex items-center gap-1">
+                                                <span className="text-yellow-400 text-xs">
+                                                    {'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}
+                                                </span>
+                                                <span className="text-xs text-gray-400">{book.rating}/5</span>
+                                            </div>
+                                        )}
+                                        {book.finishedAt && (
+                                            <p className="text-xs text-gray-400 mt-0.5">
+                                                Finished {new Date(book.finishedAt).toLocaleDateString('en-GB', {
+                                                    month: 'short',
+                                                    year: 'numeric'
+                                                })}
+                                            </p>
+                                        )}
                                         <div className="mt-3 flex gap-2">
                                             <button
                                                 onClick={() => setEditingBook(book)}

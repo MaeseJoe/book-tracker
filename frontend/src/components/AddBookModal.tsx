@@ -24,6 +24,10 @@ function StarRating({
     value: number | null;
     onChange: (v: number | null) => void;
 }) {
+    const [hovered, setHovered] = useState<number | null>(null);
+
+    const active = hovered ?? value;
+
     return (
         <div className="flex gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
@@ -31,9 +35,11 @@ function StarRating({
                     key={star}
                     type="button"
                     onClick={() => onChange(value === star ? null : star)}
-                    className={`text-2xl transition-colors ${value !== null && star <= value
+                    onMouseEnter={() => setHovered(star)}
+                    onMouseLeave={() => setHovered(null)}
+                    className={`text-2xl transition-colors ${active !== null && star <= active
                             ? 'text-yellow-400'
-                            : 'text-gray-300 hover:text-yellow-300'
+                            : 'text-gray-300'
                         }`}
                 >
                     ★

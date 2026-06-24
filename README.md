@@ -147,11 +147,12 @@ See [`.github/workflows/`](.github/workflows/) for the full pipeline definitions
 
 - [x] **Phase 1** — MVP: book CRUD with basic UI
 - [x] **Phase 2** — JWT authentication and user accounts
-- [ ] **Phase 3** — OpenLibrary API integration
-- [ ] **Phase 4** — Ratings, reviews and reading dates
-- [ ] **Phase 5** — Reading statistics dashboard
-- [ ] **Phase 6** — Automated deployment pipeline
-- [ ] **Phase 7** — Cover image upload (S3 / Cloudinary)
+- [x] **Phase 3** — OpenLibrary API integration
+- [x] **Phase 4** — Edit y delete de libros (CRUD completo en frontend)
+- [ ] **Phase 5** — Ratings, reviews and reading dates
+- [ ] **Phase 6** — Reading statistics dashboard
+- [ ] **Phase 7** — Automated deployment pipeline
+- [ ] **Phase 8** — Cover image upload (S3 / Cloudinary)
 
 ## 📄 License
 

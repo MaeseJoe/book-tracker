@@ -17,6 +17,43 @@ const STATUS_OPTIONS: { value: ReadingStatus; label: string }[] = [
     { value: 'FINISHED', label: 'Finished' },
 ];
 
+function StarRating({
+    value,
+    onChange,
+}: {
+    value: number | null;
+    onChange: (v: number | null) => void;
+}) {
+    const [hovered, setHovered] = useState<number | null>(null);
+
+    const active = hovered ?? value;
+
+    return (
+        <div className="flex gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                    key={star}
+                    type="button"
+                    onClick={() => onChange(value === star ? null : star)}
+                    onMouseEnter={() => setHovered(star)}
+                    onMouseLeave={() => setHovered(null)}
+                    className={`text-2xl transition-colors ${active !== null && star <= active
+                            ? 'text-yellow-400'
+                            : 'text-gray-300'
+                        }`}
+                >
+                    ★
+                </button>
+            ))}
+            {value && (
+                <span className="ml-2 self-center text-sm text-gray-500">
+                    {value}/5
+                </span>
+            )}
+        </div>
+    );
+}
+
 export function BookModal({ isOpen, onClose, book }: BookModalProps) {
     const queryClient = useQueryClient();
     const isEditing = !!book;
@@ -27,8 +64,14 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
     const [publishedYear, setPublishedYear] = useState(() => book?.publishedYear?.toString() ?? '');
     const [isbn, setIsbn] = useState(() => book?.isbn ?? '');
     const [coverUrl, setCoverUrl] = useState(() => book?.coverUrl ?? '');
+    const [rating, setRating] = useState<number | null>(() => book?.rating ?? null);
+    const [review, setReview] = useState(() => book?.review ?? '');
+    const [startedAt, setStartedAt] = useState(() => book?.startedAt ?? '');
+    const [finishedAt, setFinishedAt] = useState(() => book?.finishedAt ?? '');
     const [error, setError] = useState('');
 
+    const showReadingFields = status === 'READING' || status === 'FINISHED';
+    const showRatingAndReview = status === 'FINISHED';
 
     const resetForm = () => {
         setTitle('');
@@ -37,6 +80,10 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
         setPublishedYear('');
         setIsbn('');
         setCoverUrl('');
+        setRating(null);
+        setReview('');
+        setStartedAt('');
+        setFinishedAt('');
         setError('');
     };
 
@@ -85,6 +132,10 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
             publishedYear: publishedYear ? parseInt(publishedYear) : null,
             isbn: isbn.trim() || null,
             coverUrl: coverUrl.trim() || null,
+            rating: showRatingAndReview ? rating : null,
+            review: showRatingAndReview ? (review.trim() || null) : null,
+            startedAt: showReadingFields ? (startedAt || null) : null,
+            finishedAt: status === 'FINISHED' ? (finishedAt || null) : null,
         };
 
         if (isEditing) {
@@ -230,6 +281,65 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                     />
                                 </div>
                             </div>
+
+                            {showReadingFields && (
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label htmlFor="startedAt" className="block text-sm font-medium text-gray-700">
+                                            Started
+                                        </label>
+                                        <input
+                                            id="startedAt"
+                                            type="date"
+                                            value={startedAt}
+                                            max={new Date().toISOString().split('T')[0]}
+                                            onChange={(e) => setStartedAt(e.target.value)}
+                                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                        />
+                                    </div>
+
+                                    {status === 'FINISHED' && (
+                                        <div>
+                                            <label htmlFor="finishedAt" className="block text-sm font-medium text-gray-700">
+                                                Finished
+                                            </label>
+                                            <input
+                                                id="finishedAt"
+                                                type="date"
+                                                value={finishedAt}
+                                                max={new Date().toISOString().split('T')[0]}
+                                                onChange={(e) => setFinishedAt(e.target.value)}
+                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {showRatingAndReview && (
+                                <>
+                                    <div>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                            Rating
+                                        </label>
+                                        <StarRating value={rating} onChange={setRating} />
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="review" className="block text-sm font-medium text-gray-700">
+                                            Review
+                                        </label>
+                                        <textarea
+                                            id="review"
+                                            rows={3}
+                                            value={review}
+                                            onChange={(e) => setReview(e.target.value)}
+                                            placeholder="What did you think of this book?"
+                                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+                                        />
+                                    </div>
+                                </>
+                            )}
 
                             <div className="flex gap-3 pt-2">
                                 <button

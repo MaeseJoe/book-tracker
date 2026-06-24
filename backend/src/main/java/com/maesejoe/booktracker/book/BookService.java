@@ -45,6 +45,10 @@ public class BookService {
                 .isbn(request.isbn())
                 .coverUrl(request.coverUrl())
                 .status(request.status())
+                .rating(request.rating())
+                .review(request.review())
+                .startedAt(request.startedAt())
+                .finishedAt(request.finishedAt())
                 .build();
 
         return BookResponse.from(bookRepository.save(book));
@@ -61,6 +65,10 @@ public class BookService {
         book.setIsbn(request.isbn());
         book.setCoverUrl(request.coverUrl());
         book.setStatus(request.status());
+        book.setRating(request.rating());
+        book.setReview(request.review());
+        book.setStartedAt(request.startedAt());
+        book.setFinishedAt(request.finishedAt());
 
         return BookResponse.from(bookRepository.save(book));
     }

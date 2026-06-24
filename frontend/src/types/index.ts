@@ -8,6 +8,10 @@ export interface Book {
 	isbn: string | null;
 	coverUrl: string | null;
 	status: ReadingStatus;
+	rating: number | null;
+	review: string | null;
+	startedAt: string | null;
+	finishedAt: string | null;
 }
 
 export interface BookRequest {
@@ -17,6 +21,10 @@ export interface BookRequest {
 	isbn?: string | null;
 	coverUrl?: string | null;
 	status: ReadingStatus;
+	rating?: number | null;
+	review?: string | null;
+	startedAt?: string | null;
+	finishedAt?: string | null;
 }
 
 export interface AuthResponse {

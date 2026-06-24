@@ -24,16 +24,16 @@ export function DeleteBookModal({ isOpen, onClose, book }: DeleteBookModalProps)
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-            <div className="relative w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
-                <h2 className="text-lg font-semibold text-gray-900">Delete book</h2>
-                <p className="mt-2 text-sm text-gray-600">
+            <div className="relative w-full max-w-sm rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Delete book</h2>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     Are you sure you want to delete{' '}
                     <span className="font-medium">"{book.title}"</span>?
                     This action cannot be undone.
                 </p>
 
                 {mutation.isError && (
-                    <div className="mt-3 rounded-md bg-red-50 p-3 text-sm text-red-700">
+                    <div className="mt-3 rounded-md bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400">
                         Failed to delete book. Please try again.
                     </div>
                 )}
@@ -43,7 +43,7 @@ export function DeleteBookModal({ isOpen, onClose, book }: DeleteBookModalProps)
                         type="button"
                         onClick={onClose}
                         disabled={mutation.isPending}
-                        className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+                        className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
                     >
                         Cancel
                     </button>

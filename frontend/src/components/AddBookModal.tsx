@@ -38,8 +38,8 @@ function StarRating({
                     onMouseEnter={() => setHovered(star)}
                     onMouseLeave={() => setHovered(null)}
                     className={`text-2xl transition-colors ${active !== null && star <= active
-                            ? 'text-yellow-400'
-                            : 'text-gray-300'
+                        ? 'text-yellow-400'
+                        : 'text-gray-300'
                         }`}
                 >
                     ★
@@ -150,14 +150,14 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div className="absolute inset-0 bg-black/50" onClick={handleClose} />
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="relative w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-6 shadow-xl max-h-[90vh] overflow-y-auto">
                 <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-900">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                         {isEditing ? 'Edit book' : 'Add book'}
                     </h2>
                     <button
                         onClick={handleClose}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     >
                         ✕
                     </button>
@@ -165,7 +165,7 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
 
                 <div className="space-y-4">
                     {error && (
-                        <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+                        <div className="rounded-md bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-700 dark:text-red-400">
                             {error}
                         </div>
                     )}
@@ -173,7 +173,7 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                     <BookSearch onSelect={handleOpenLibrarySelect} />
 
                     {coverUrl && (
-                        <div className="flex items-center gap-3 rounded-md bg-gray-50 p-3">
+                        <div className="flex items-center gap-3 rounded-md bg-gray-50 dark:bg-gray-700 p-3">
                             <img
                                 src={coverUrl}
                                 alt="Cover preview"
@@ -183,8 +183,8 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                 }}
                             />
                             <div className="min-w-0 flex-1">
-                                <p className="text-sm font-medium text-gray-900 line-clamp-1">{title}</p>
-                                <p className="text-xs text-gray-500">{author}</p>
+                                <p className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">{title}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{author}</p>
                                 <button
                                     type="button"
                                     onClick={() => setCoverUrl('')}
@@ -196,14 +196,14 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                         </div>
                     )}
 
-                    <div className="border-t border-gray-100 pt-4">
-                        <p className="mb-3 text-xs text-gray-400">
+                    <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
+                        <p className="mb-3 text-xs text-gray-400 dark:text-gray-500">
                             {isEditing ? 'Update the details below' : 'Or fill in the details manually'}
                         </p>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div>
-                                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Title <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -212,13 +212,13 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                     required
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                     placeholder="The Pragmatic Programmer"
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="author" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="author" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Author <span className="text-red-500">*</span>
                                 </label>
                                 <input
@@ -227,20 +227,20 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                     required
                                     value={author}
                                     onChange={(e) => setAuthor(e.target.value)}
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                     placeholder="David Thomas"
                                 />
                             </div>
 
                             <div>
-                                <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+                                <label htmlFor="status" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                     Status <span className="text-red-500">*</span>
                                 </label>
                                 <select
                                     id="status"
                                     value={status}
                                     onChange={(e) => setStatus(e.target.value as ReadingStatus)}
-                                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                    className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                 >
                                     {STATUS_OPTIONS.map((opt) => (
                                         <option key={opt.value} value={opt.value}>
@@ -252,7 +252,7 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
 
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label htmlFor="year" className="block text-sm font-medium text-gray-700">
+                                    <label htmlFor="year" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                         Year
                                     </label>
                                     <input
@@ -262,13 +262,13 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                         max={new Date().getFullYear()}
                                         value={publishedYear}
                                         onChange={(e) => setPublishedYear(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                        className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                         placeholder="2024"
                                     />
                                 </div>
 
                                 <div>
-                                    <label htmlFor="isbn" className="block text-sm font-medium text-gray-700">
+                                    <label htmlFor="isbn" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                         ISBN
                                     </label>
                                     <input
@@ -276,7 +276,7 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                         type="text"
                                         value={isbn}
                                         onChange={(e) => setIsbn(e.target.value)}
-                                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                        className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                         placeholder="978-0-13-468599-1"
                                     />
                                 </div>
@@ -285,7 +285,7 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                             {showReadingFields && (
                                 <div className="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label htmlFor="startedAt" className="block text-sm font-medium text-gray-700">
+                                        <label htmlFor="startedAt" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                             Started
                                         </label>
                                         <input
@@ -294,13 +294,13 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                             value={startedAt}
                                             max={new Date().toISOString().split('T')[0]}
                                             onChange={(e) => setStartedAt(e.target.value)}
-                                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                         />
                                     </div>
 
                                     {status === 'FINISHED' && (
                                         <div>
-                                            <label htmlFor="finishedAt" className="block text-sm font-medium text-gray-700">
+                                            <label htmlFor="finishedAt" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                                 Finished
                                             </label>
                                             <input
@@ -309,7 +309,7 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                                 value={finishedAt}
                                                 max={new Date().toISOString().split('T')[0]}
                                                 onChange={(e) => setFinishedAt(e.target.value)}
-                                                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                                className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
                                             />
                                         </div>
                                     )}
@@ -319,14 +319,14 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                             {showRatingAndReview && (
                                 <>
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                             Rating
                                         </label>
                                         <StarRating value={rating} onChange={setRating} />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="review" className="block text-sm font-medium text-gray-700">
+                                        <label htmlFor="review" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                                             Review
                                         </label>
                                         <textarea
@@ -335,7 +335,7 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                             value={review}
                                             onChange={(e) => setReview(e.target.value)}
                                             placeholder="What did you think of this book?"
-                                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
+                                            className="mt-1 block w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-3 py-2 text-sm text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
                                         />
                                     </div>
                                 </>
@@ -345,7 +345,7 @@ export function BookModal({ isOpen, onClose, book }: BookModalProps) {
                                 <button
                                     type="button"
                                     onClick={handleClose}
-                                    className="flex-1 rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                                    className="flex-1 rounded-md border border-gray-300 dark:border-gray-600 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                 >
                                     Cancel
                                 </button>
